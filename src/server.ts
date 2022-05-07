@@ -17,19 +17,26 @@ export class Server {
     this.server = http.createServer(this.app);
     this.io = new IO(this.server);
 
+    this.initRoutes();
     this.init(callback);
   }
 
   private init(callback) {
-    this.app.use(express.static(path.join(BASE_PATH, 'ui')));
-
-    this.app.get('/', (req, res) => {
-      res.sendFile(path.join(BASE_PATH, 'ui', 'index.html'));
-    });
-
     this.server.listen(this.port, () => {
       Logger.Success('Server started on port ' + this.port);
       callback();
+    });
+  }
+
+  private initRoutes() {
+    this.app.use(express.static(path.join(BASE_PATH, 'ui')));
+
+    this.app.get('/', (req, res) => {
+      res.sendFile(path.join(BASE_PATH, 'index.html'));
+    });
+
+    this.app.get('/count', (req, res) => {
+      res.send('fuck you bitch');
     });
   }
 }
