@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'path';
 import * as http from 'http';
-import { Server as IO, Socket } from 'socket.io';
+import { Server as IO } from 'socket.io';
 import { Logger } from './Logger/Logger';
+import { KBMhooks } from './kbmhooks';
 
 const BASE_PATH = path.join(__dirname, '..');
 
@@ -33,10 +34,6 @@ export class Server {
 
     this.app.get('/', (req, res) => {
       res.sendFile(path.join(BASE_PATH, 'index.html'));
-    });
-
-    this.app.get('/count', (req, res) => {
-      res.send('fuck you bitch');
     });
   }
 }

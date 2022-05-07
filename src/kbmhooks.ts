@@ -1,11 +1,14 @@
 import gkm from 'gkm';
-import { Logger } from './Logger/Logger';
+import { Client } from './client';
+import { Config } from './Config/Config';
+import { CountHandler } from './countHandler';
 
 export class KBMhooks {
   private static modPressed = [];
-  public static key;
+  private static key;
+  private static editMode = false;
 
-  constructor() {
+  constructor(client) {
     this.initHandlers();
   }
 
@@ -18,8 +21,13 @@ export class KBMhooks {
         return;
       }
 
+      if (!KBMhooks.getEditStatus()) {
+        CountHandler.handleIncrement(KBMhooks.modPressed, data[0]);
+        return;
+      }
+
       if (!modKey) {
-        KBMhooks.key = data;
+        KBMhooks.key = data[0];
       }
     });
 
@@ -31,5 +39,36 @@ export class KBMhooks {
         return;
       }
     });
+  }
+
+  public static toggleEditMode() {
+    this.editMode = !this.editMode;
+    if (this.editMode == false) {
+      if (this.getLocalKeys().join(' ') !== this.getSavedKeys().join(' ')) {
+        this.saveKeys();
+      }
+    }
+    this.modPressed = [];
+    this.updateEditMode();
+  }
+
+  public static updateEditMode() {
+    Client.Instance.io.emit('edit', KBMhooks.getEditStatus());
+  }
+
+  public static getEditStatus() {
+    return this.editMode;
+  }
+
+  public static getLocalKeys() {
+    return [...this.modPressed, this.key];
+  }
+
+  public static getSavedKeys() {
+    return Config.Instance.Get('hotkeys');
+  }
+
+  public static saveKeys() {
+    Config.Instance.Set('hotkeys', this.getLocalKeys());
   }
 }

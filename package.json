@@ -8,9 +8,11 @@
     "start": "tsc && yarn run build-ui && yarn run assets && electron .",
     "build": "tsc -p .",
     "build-ui": "cd svelte && yarn run build-svelte && cp -r -T ./dist/. ../ui && cd ..",
-    "assets": "cp -r -T ./ui dist/ui"
+    "assets": "cp -r -T ./ui dist/ui",
+    "fix": "electron-builder install-app-deps"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.5.0",
     "@types/chalk": "^2.2.0",
     "@types/express": "^4.17.13",
     "@types/fs-extra": "^8.1.0",
@@ -18,10 +20,12 @@
     "@types/node": "^13.11.0",
     "@types/socket.io": "^3.0.2",
     "electron": "^18.2.0",
+    "electron-builder": "^23.0.3",
     "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "better-sqlite3": "^7.5.1",
     "chalk": "^4.0.0",
     "express": "^4.18.1",
     "fs-extra": "^9.0.0",

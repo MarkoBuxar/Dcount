@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { Client } from './src/client';
+import { DB } from './src/database';
 import { KBMhooks } from './src/kbmhooks';
 import { Server } from './src/server';
 
@@ -16,9 +17,10 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-  var server = new Server(createWindow);
-  var client = new Client(server.io);
-  var kbm = new KBMhooks();
+  const server = new Server(createWindow);
+  const client = new Client(server.io);
+  const kbm = new KBMhooks(client);
+  const database = new DB();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -1,2 +1,5 @@
 node_modules
 dist
+save.db
+svelte/node_modules
+svelte/dist
