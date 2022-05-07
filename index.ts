@@ -1,4 +1,6 @@
 import { app, BrowserWindow } from 'electron';
+import { Client } from './src/client';
+import { Logger } from './src/Logger/Logger';
 import { Server } from './src/server';
 
 const createWindow = () => {
@@ -14,7 +16,8 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-  new Server(createWindow);
+  var server = new Server(createWindow);
+  var client = new Client(server.io);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
