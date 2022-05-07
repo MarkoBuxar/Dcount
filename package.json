@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsc && yarn run assets && electron .",
     "build": "tsc -p .",
-    "assets": "cp -r ./ui dist/ui"
+    "assets": "cp -r -T ./ui dist/ui"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
@@ -19,8 +19,12 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@types/express": "^4.17.13",
+    "@types/socket.io": "^3.0.2",
     "chalk": "^4.0.0",
+    "express": "^4.18.1",
     "fs-extra": "^9.0.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "socket.io": "^4.5.0"
   }
 }

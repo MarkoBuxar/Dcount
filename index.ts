@@ -1,23 +1,30 @@
 import { app, BrowserWindow } from 'electron';
-import Path from 'path';
+import { Server } from './src/server';
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar: true,
+    useContentSize: true,
   });
 
-  win.loadFile(Path.join(__dirname, 'ui', 'index.html'));
+  win.loadURL('http://localhost:3000/');
+  win.focus();
 };
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
-
 app.whenReady().then(() => {
-  createWindow();
+  new Server(createWindow);
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
   });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
