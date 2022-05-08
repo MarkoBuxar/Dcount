@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "tsc && yarn run build-ui && yarn run assets && electron .",
+    "start": "tsc && yarn run build-ui && electron .",
     "build": "tsc -p .",
-    "build-ui": "cd svelte && yarn run build-svelte && cp -r -T ./dist/. ../ui && cd ..",
+    "build-ui": "cd svelte && yarn run build-svelte && cp -r -T ./dist/. ../ui && cd .. && yarn run assets",
     "assets": "cp -r -T ./ui dist/ui",
     "fix": "electron-builder install-app-deps"
   },
@@ -21,10 +21,15 @@
     "@types/socket.io": "^3.0.2",
     "electron": "^18.2.0",
     "electron-builder": "^23.0.3",
+    "postcss": "^8.4.13",
+    "sass": "^1.51.0",
+    "svelte-materialify": "^0.3.11",
+    "svelte-preprocess": "^4.10.6",
     "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@mdi/js": "^6.6.96",
     "better-sqlite3": "^7.5.1",
     "chalk": "^4.0.0",
     "express": "^4.18.1",
