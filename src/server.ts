@@ -32,8 +32,8 @@ export class Server {
   private initRoutes() {
     this.app.use(express.static(path.join(BASE_PATH, 'ui')));
 
-    this.app.get('/', (req, res) => {
-      res.sendFile(path.join(BASE_PATH, 'index.html'));
+    this.app.get('*', (req, res) => {
+      res.sendFile(path.join(BASE_PATH, 'ui', 'index.html'));
     });
   }
 }
