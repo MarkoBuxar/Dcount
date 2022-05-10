@@ -2,13 +2,15 @@ import gkm from 'gkm';
 import { Client } from './client';
 import { Config } from './Config/Config';
 import { CountHandler } from './countHandler';
+import { Logger } from './Logger/Logger';
 
 export class KBMhooks {
   private static modPressed = [];
   private static key;
   private static editMode = false;
 
-  constructor(client) {
+  constructor() {
+    Logger.Info('started KBM handlers');
     this.initHandlers();
   }
 

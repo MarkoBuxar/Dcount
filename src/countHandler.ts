@@ -1,12 +1,15 @@
 import { Client } from './client';
 import { DB } from './database';
 import { KBMhooks } from './kbmhooks';
+import { Logger } from './Logger/Logger';
 
 export class CountHandler {
   constructor() {}
 
   public static handleIncrement(modKeys, key) {
     const pressedKeys = [...modKeys, key].join(' ');
+
+    Logger.Info(KBMhooks.getSavedKeys().toString());
 
     if (KBMhooks.getSavedKeys().join(' ') != pressedKeys) return;
 

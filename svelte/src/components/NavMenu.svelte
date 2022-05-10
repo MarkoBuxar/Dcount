@@ -87,7 +87,7 @@
             <span class="ml-1" slot="prepend">
               <Icon path={mdiHome} />
             </span>
-            Home
+            Dashboard
           </ListItem>
         </Link>
         <Link to="/settings">

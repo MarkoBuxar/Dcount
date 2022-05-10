@@ -19,7 +19,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   const server = new Server(createWindow);
   const client = new Client(server.io);
-  const kbm = new KBMhooks(client);
+  const kbm = new KBMhooks();
   const database = new DB();
 
   app.on('activate', () => {

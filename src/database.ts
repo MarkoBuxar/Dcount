@@ -1,4 +1,5 @@
 import sqlite from 'better-sqlite3';
+import { Logger } from './Logger/Logger';
 
 export class DB {
   private db;
@@ -6,9 +7,9 @@ export class DB {
   public static CURR_SAVE = 'def';
 
   constructor() {
-    this.db = sqlite('save.db', { verbose: console.log });
+    this.db = sqlite('save.db', { verbose: Logger.Debug });
 
-    console.log('db initiated');
+    Logger.Info('DB initiated');
     const index =
       'CREATE TABLE IF NOT EXISTS saves(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(30) NOT NULL, start_t TIMESTAMP DEFAULT CURRENT_TIMESTAMP)';
     const table =
@@ -56,7 +57,6 @@ export class DB {
       'SELECT * FROM entries WHERE save = ? ORDER BY value DESC LIMIT 1',
     );
     const res = statement.get(save);
-    console.log(res);
     return res;
   }
 }
