@@ -2,20 +2,14 @@
   import { MaterialApp } from 'svelte-materialify';
   import NavMenu from './components/NavMenu.svelte';
   import Routes from './routes.svelte';
-
-  let state = {
-    count: 0,
-    editMode: false,
-    save: 'default',
-    theme: 'dark',
-  };
+  import { theme, editMode, count } from './Stores';
 
   var socket = io();
 
-  socket.emit('test');
+  let state = {};
 
   socket.on('count', function (data) {
-    state.count = data;
+    $count = data;
   });
 
   socket.on('edit', function (data) {
@@ -26,25 +20,33 @@
     socket.emit('toggleEdit', {});
   }
 
-  function toggleTheme() {
-    // todo: save theme to cookies
-    if (state.theme === 'light') state.theme = 'dark';
-    else state.theme = 'light';
-  }
-
   function updateEditStatus(data) {
-    state.editMode = data;
+    $editMode = data;
   }
 </script>
 
 <main class="dc-content">
-  <MaterialApp theme={state.theme}>
-    <NavMenu {toggleTheme} save={state.save} />
+  <MaterialApp theme={$theme}>
+    <NavMenu />
     <Routes {...state} />
   </MaterialApp>
 </main>
 
 <style global>
+  .dc-main-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .dc-split-col {
+    padding: 0 !important;
+  }
+
+  .dc-split-col > .dc-card-container {
+    max-width: 100% !important;
+  }
+
   .dc-content {
     width: 100%;
     height: 100%;

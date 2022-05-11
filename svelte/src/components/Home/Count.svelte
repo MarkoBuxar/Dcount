@@ -1,8 +1,7 @@
 <script>
   import { Card, Col, Switch } from 'svelte-materialify';
+  import { count, save } from '../../Stores';
 
-  export let save;
-  export let count;
   export let toggleable = false;
   export let enabled;
 </script>
@@ -15,14 +14,13 @@
       </div>
     {/if}
 
-    <div class="dc-card-title">{save}</div>
-    <div class="dc-card-count">{count}</div>
+    <div class="dc-card-title">{$save}</div>
+    <div class="dc-card-count">{$count}</div>
   </Col>
 </Card>
 
 <style global>
   .dc-card-container {
-    max-width: 75% !important;
     margin: 25px;
     text-align: center;
     display: flex;

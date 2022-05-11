@@ -9,8 +9,6 @@ export class CountHandler {
   public static handleIncrement(modKeys, key) {
     const pressedKeys = [...modKeys, key].join(' ');
 
-    Logger.Info(KBMhooks.getSavedKeys().toString());
-
     if (KBMhooks.getSavedKeys().join(' ') != pressedKeys) return;
 
     DB.Instance.createIncident(DB.CURR_SAVE);

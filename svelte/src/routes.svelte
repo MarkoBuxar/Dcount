@@ -1,14 +1,12 @@
 <script>
   import { Router, Route } from 'svelte-routing';
   import Home from './components/Home/Home.svelte';
-  import Settings from './components/Settings.svelte';
+  import SettingsScreen from './components/Settings/SettingsScreen.svelte';
 
   export let url = '';
-  export let count;
-  export let save;
 </script>
 
 <Router {url}>
-  <Route path="/"><Home {count} {save} /></Route>
-  <Route path="/settings"><Settings {save} /></Route>
+  <Route path="/"><Home /></Route>
+  <Route path="/settings"><SettingsScreen /></Route>
 </Router>

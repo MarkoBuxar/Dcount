@@ -8,6 +8,8 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    minWidth: 800,
+    minHeight: 550,
     autoHideMenuBar: true,
     useContentSize: true,
   });

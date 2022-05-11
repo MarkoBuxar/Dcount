@@ -22,9 +22,12 @@
     Overlay,
   } from 'svelte-materialify';
   import { Link, Router } from 'svelte-routing';
+  import { save, theme } from '../Stores';
 
-  export let save;
-  export let toggleTheme;
+  function toggleTheme() {
+    if ($theme === 'light') $theme = 'dark';
+    else $theme = 'light';
+  }
 
   let active = false;
 
@@ -53,7 +56,7 @@
               <Button
                 outlined
                 style="width: 170px; justify-content: space-between"
-                >{save}
+                >{$save}
                 <Icon path={mdiChevronDown} />
               </Button>
             </div>
