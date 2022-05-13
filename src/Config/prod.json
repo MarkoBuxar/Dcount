@@ -1,0 +1,7 @@
+{
+    "log": {
+      "level": ["ERR", "INFO", "SUCC"]
+    },
+    "hotkeys": ["S"]
+  }
+  
