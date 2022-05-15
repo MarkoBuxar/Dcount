@@ -10,7 +10,7 @@ export class KBMhooks {
   private static editMode = false;
 
   constructor() {
-    Logger.Info('started KBM handlers');
+    Logger.Info('Initiated KBM handlers');
     this.initHandlers();
   }
 

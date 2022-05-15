@@ -2,12 +2,13 @@
   import { Divider, Row } from 'svelte-materialify';
   import Count from '../Home/Count.svelte';
   import Settings from './Settings.svelte';
+  import { count, save } from '../../Stores';
 </script>
 
 <div class="dc-main-container d-flex align-center justify-center">
   <div class="dc-content-half d-flex flex-column justify-center">
     <div>
-      <Count />
+      <Count count={$count} save={$save} />
     </div>
   </div>
 

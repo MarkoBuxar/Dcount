@@ -9,7 +9,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     minWidth: 800,
-    minHeight: 550,
+    minHeight: 600,
     autoHideMenuBar: true,
     useContentSize: true,
   });
@@ -22,7 +22,7 @@ app.whenReady().then(() => {
   const server = new Server(createWindow);
   const client = new Client(server.io);
   const kbm = new KBMhooks();
-  const database = new DB();
+  const database = DB.Instance;
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

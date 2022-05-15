@@ -16,7 +16,7 @@
 </script>
 
 <div class="dc-settings-title">
-  <h1>Settings</h1>
+  <h3 class="ma-2">Settings</h3>
 </div>
 
 <div class="dc-settings-content d-flex flex-column justify-center ma-5">

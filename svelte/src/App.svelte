@@ -43,10 +43,6 @@
     padding: 0 !important;
   }
 
-  .dc-split-col > .dc-card-container {
-    max-width: 100% !important;
-  }
-
   .dc-content {
     width: 100%;
     height: 100%;
@@ -54,5 +50,9 @@
 
   .dc-side-menu-items > a {
     text-decoration: none;
+  }
+
+  .s-list-item__content {
+    padding: 0 !important;
   }
 </style>

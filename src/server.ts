@@ -3,7 +3,6 @@ import path from 'path';
 import * as http from 'http';
 import { Server as IO } from 'socket.io';
 import { Logger } from './Logger/Logger';
-import { KBMhooks } from './kbmhooks';
 
 const BASE_PATH = path.join(__dirname, '..');
 

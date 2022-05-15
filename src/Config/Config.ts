@@ -13,7 +13,6 @@ export class Config {
   constructor() {
     this.confPath = process.env.PRODUCTION ? './prod.json' : 'config.json';
     this.conf = process.env.PRODUCTION ? prod : config;
-    console.log(this.confPath);
   }
 
   public static get Instance() {

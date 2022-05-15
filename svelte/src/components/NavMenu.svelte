@@ -30,12 +30,22 @@
   }
 
   let active = false;
+  let subMenuActive = false;
 
   function close() {
     active = false;
+    subMenuActive = false;
   }
   function open() {
     active = true;
+  }
+
+  function closeSubMenu() {
+    subMenuActive = false;
+  }
+
+  function openSubMenu() {
+    subMenuActive = true;
   }
 </script>
 
@@ -51,13 +61,13 @@
           <Button on:click={close} icon x-large
             ><Icon path={mdiCloseThick} /></Button
           >
-          <Menu>
+          <Menu on:close={closeSubMenu} on:open={openSubMenu}>
             <div slot="activator">
               <Button
                 outlined
                 style="width: 170px; justify-content: space-between"
                 >{$save}
-                <Icon path={mdiChevronDown} />
+                <Icon path={mdiChevronDown} rotate={subMenuActive ? 180 : 0} />
               </Button>
             </div>
             <List style="width: 170px">
