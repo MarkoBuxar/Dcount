@@ -18,10 +18,14 @@
   </div>
 </div>
 
-<style>
+<style global>
   .dc-content-half {
     width: 50%;
     height: 100%;
     overflow: hidden;
+  }
+
+  .dc-content-half .dc-card-container {
+    width: 100%;
   }
 </style>

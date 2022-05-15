@@ -19,7 +19,17 @@ export class Client {
       this.clients[socket.id] = socket;
       await this.initOutlets(socket);
       var currHighest = DB.Instance.getCurrentHighest(DB.CURR_SAVE);
+      var currHighestSplit = DB.Instance.getCurrentHighestSplit(
+        DB.CURR_SAVE,
+        DB.CURR_SPLIT,
+      );
+      socket.emit('save', DB.CURR_SAVE);
+      socket.emit('split', DB.CURR_SPLIT);
       socket.emit('count', currHighest ? currHighest.value : 0);
+      socket.emit(
+        'splitCount',
+        currHighestSplit ? currHighestSplit.s_value : 0,
+      );
       socket.emit('edit', KBMhooks.getEditStatus());
     });
   }

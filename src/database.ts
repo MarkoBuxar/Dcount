@@ -1,4 +1,5 @@
 import sqlite from 'better-sqlite3';
+import { Config } from './Config/Config';
 import { dbInitHandler } from './dbInitHandler';
 import { KBMhooks } from './kbmhooks';
 import { Logger } from './Logger/Logger';
@@ -6,21 +7,13 @@ import { Logger } from './Logger/Logger';
 export class DB {
   private db;
   private static _instance;
-  public static CURR_SAVE = 'def';
+  public static CURR_SAVE = Config.Instance.Get('save') || 'def';
+  public static CURR_SPLIT = Config.Instance.Get('split') || 'def';
 
   constructor() {
     this.db = sqlite('save.db', { verbose: Logger.Debug });
 
-    const saves = this.db.prepare(
-      'CREATE TABLE IF NOT EXISTS saves(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(30) NOT NULL, hotkeys VARCHAR(255) NOT NULL, start_t TIMESTAMP DEFAULT CURRENT_TIMESTAMP)',
-    );
-
-    const entries = this.db.prepare(
-      'CREATE TABLE IF NOT EXISTS entries(id INTEGER PRIMARY KEY AUTOINCREMENT, save INTEGER, value INTEGER NOT NULL, s_value INTEGER, split VARCHAR(30), t TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (save) REFERENCES saves(id))',
-    );
-
-    saves.run();
-    entries.run();
+    new dbInitHandler(this.db).init();
 
     if (!this.getCurrentSaveID(DB.CURR_SAVE)) {
       this.createNewSave(DB.CURR_SAVE, JSON.stringify(KBMhooks.getSavedKeys()));
@@ -76,5 +69,42 @@ export class DB {
     );
     const res = statement.get(save);
     return res;
+  }
+
+  public getCurrentHighestSplit(name, split, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
+
+    const statement = this.db.prepare(
+      'SELECT s_value FROM entries WHERE save = ? AND split = ? ORDER BY value DESC LIMIT 1',
+    );
+
+    const res = statement.get(save, split);
+    return res;
+  }
+
+  public getSplitList(name, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
+
+    const statement = this.db.prepare(
+      'SELECT DISTINCT split FROM entries WHERE save = ? AND split IS NOT NULL',
+    );
+
+    const res = statement.all(save);
+    return res;
+  }
+
+  public createSplit(name, saveName, id?) {
+    const save = id || this.getCurrentSaveID(saveName);
+    if (!save) return;
+
+    var currVal = this.getCurrentHighest(saveName, null, save) || { value: 0 };
+
+    const statement = this.db.prepare(
+      'INSERT INTO entries (save, value, split, s_value) VALUES (?, ?, ?, ?)',
+    );
+
+    statement.run(save, currVal.value, name, 0);
   }
 }

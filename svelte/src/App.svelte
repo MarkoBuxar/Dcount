@@ -1,28 +1,14 @@
 <script>
   import { MaterialApp } from 'svelte-materialify';
+  import { sockets } from './Sockets';
   import NavMenu from './components/NavMenu.svelte';
   import Routes from './routes.svelte';
-  import { theme, editMode, count } from './Stores';
+  import { theme } from './Stores';
 
-  var socket = io();
+  let s = new sockets(io);
+  s.init();
 
   let state = {};
-
-  socket.on('count', function (data) {
-    $count = data;
-  });
-
-  socket.on('edit', function (data) {
-    updateEditStatus(data);
-  });
-
-  function toggleEditStatus() {
-    socket.emit('toggleEdit', {});
-  }
-
-  function updateEditStatus(data) {
-    $editMode = data;
-  }
 </script>
 
 <main class="dc-content">

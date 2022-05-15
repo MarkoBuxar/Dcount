@@ -9,7 +9,7 @@
     Switch,
     TextField,
   } from 'svelte-materialify';
-  import { splits } from '../../Stores';
+  import { splitsEnabled } from '../../Stores';
 
   const items = ['foo', 'bar', 'fizz', 'buzz'];
   let fontSize = 26;
@@ -32,7 +32,7 @@
         <span class="d-flex flex-column justify-center">
           Enable <br /> Splits</span
         >
-        <Switch class="ma-2 ml-5" bind:checked={$splits} />
+        <Switch class="ma-2 ml-5" bind:checked={$splitsEnabled} />
       </div>
     </Row>
 

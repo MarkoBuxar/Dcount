@@ -5,6 +5,8 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import { sveltePreprocess } from 'svelte-preprocess/dist/autoProcess';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+import tsPlugin from '@rollup/plugin-typescript';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -54,6 +56,10 @@ export default {
         },
       }),
     }),
+
+    tsPlugin({
+      compilerOptions: { lib: ['es5', 'es6', 'dom'], target: 'es6' },
+    }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
     css({ output: 'svelte-bundle.css' }),
@@ -67,6 +73,7 @@ export default {
       browser: true,
       dedupe: ['svelte'],
     }),
+    nodePolyfills({}),
     commonjs(),
 
     // In dev mode, call `npm run start` once

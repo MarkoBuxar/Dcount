@@ -5,12 +5,16 @@
     Button,
     Card,
     Col,
+    Dialog,
     Icon,
     List,
     ListItem,
     Menu,
     Switch,
+    TextField,
   } from 'svelte-materialify';
+  import { splitList } from '../../Stores';
+  import { sockets } from '../../Sockets';
 
   export let count;
   export let save;
@@ -18,16 +22,37 @@
   export let toggleable = false;
   export let enabled;
   let menuOpen = false;
+  let dialogOpen = false;
+  let dialogTextField;
 
-  let menuBtnClass =
-    'dc-splits-list-button d-flex flex-row justify-space-between';
+  let menuBtnClass = 'dc-splits-list-button';
 
   function openMenu() {
+    sockets.Instance.socket.emit('getSplits');
     menuOpen = true;
   }
 
   function closeMenu() {
     menuOpen = false;
+  }
+
+  function openCreatePopup() {
+    dialogOpen = true;
+  }
+
+  function closeCreatePopup() {
+    dialogOpen = false;
+    dialogTextField = '';
+  }
+
+  function selectSplit() {
+    sockets.Instance.socket.emit('selectSplit', { split: this.innerText });
+  }
+
+  function createNewSplit() {
+    if (!dialogTextField) return;
+    sockets.Instance.socket.emit('createSplit', { name: dialogTextField });
+    closeCreatePopup();
   }
 </script>
 
@@ -48,13 +73,16 @@
             </Button>
           </div>
           <List style="width: 170px">
-            <ListItem>
-              <span slot="prepend">
-                <Icon path={mdiAccountBoxMultiple} />
-              </span>
-              Option 2</ListItem
-            >
-            <ListItem>
+            {#each $splitList as split}
+              <ListItem on:click={selectSplit}>
+                <span slot="prepend">
+                  <Icon path={mdiAccountBoxMultiple} />
+                </span>
+                {split.split}</ListItem
+              >
+            {/each}
+
+            <ListItem on:click={openCreatePopup}>
               <span slot="prepend">
                 <Icon path={mdiPlus} />
               </span>
@@ -73,16 +101,40 @@
   </Col>
 </Card>
 
+<Dialog class="pa-4 text-center" bind:active={dialogOpen}>
+  <div class="dc-splits-dialog-title pa-3 mb-7">
+    <h3>Create new split</h3>
+  </div>
+  <div class="dc-splits-dialog-textField mb-7">
+    <TextField outlined counter={30} bind:value={dialogTextField}
+      >Split Name</TextField
+    >
+  </div>
+
+  <div class="dc-splits-dialog-buttons d-flex flex-row justify-end">
+    <Button outlined class="red-text" on:click={closeCreatePopup}>Cancel</Button
+    >
+    <Button outlined class="green-text ml-2" on:click={createNewSplit}
+      >Create</Button
+    >
+  </div>
+</Dialog>
+
 <style global>
   .dc-card-container {
     margin: 10px;
     text-align: center;
     display: flex;
+    width: calc(50% - 20px);
   }
 
   .dc-card-title {
     font-size: 48px;
     margin-bottom: 12px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .dc-card-count {
@@ -104,11 +156,16 @@
     background: #1e1e1e;
   }
 
+  .dc-splits-list .s-btn__content {
+    width: 100%;
+  }
+
   .dc-splits-list-button {
     min-width: 40px !important;
     width: 40px;
     transition: width 0.4s ease-in-out;
     z-index: 1;
+    padding: 0;
   }
 
   .dc-splits-list-button:hover,
@@ -117,29 +174,19 @@
   }
 
   .dc-splits-list-button i {
-    transition: transform 0.2s ease-in-out, left 0.4s ease-in-out;
-    /* transform: translateX(-75px); */
-    left: -75px;
-  }
-
-  .dc-splits-list-button:hover i {
-    transform: translateX(0px);
-    left: 0px;
+    transition: transform 0.2s ease-in-out;
+    right: 0;
   }
 
   .dc-splits-list-button.active i {
-    transform: translateX(0px) rotate(180deg);
-    left: 0px;
+    transform: rotate(180deg);
   }
 
   .dc-splits-list-button-text {
-    /* display: none; */
-    transition: transform 0.4s ease-in-out;
-    transform: translateX(-80px);
-  }
-  .dc-splits-list-button:hover .dc-splits-list-button-text,
-  .dc-splits-list-button.active .dc-splits-list-button-text {
-    transform: translateX(0px);
-    /* display: block; */
+    text-align: start;
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

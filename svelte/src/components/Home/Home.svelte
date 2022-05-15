@@ -2,8 +2,7 @@
   import { Card, Col, Row } from 'svelte-materialify';
 
   import Count from './Count.svelte';
-  import { splits } from '../../Stores';
-  import { count, save } from '../../Stores';
+  import { count, splitCount, save, split, splitsEnabled } from '../../Stores';
 </script>
 
 <div class="dc-main-container">
@@ -11,8 +10,8 @@
     <Col>
       <Row class="justify-space-around">
         <Count count={$count} save={$save} />
-        {#if $splits}
-          <Count count={$count} save={$save} toggleable />
+        {#if $splitsEnabled}
+          <Count count={$splitCount} save={$split} toggleable />
         {/if}
       </Row>
       <Row>
