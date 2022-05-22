@@ -1,16 +1,17 @@
 {
-  "name": "ts-boilerplate",
-  "description": "typescript boilerplate",
-  "version": "0.0.1",
+  "name": "d-count",
+  "description": "Death counter",
+  "version": "1.0.0",
+  "author": "Mrucs",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "tsc && yarn run build-ui && electron .",
-    "build": "tsc -p . && yarn run build-ui && yarn run pack",
+    "start": "SET NODE_ENV=development & tsc && yarn run build-ui && electron .",
+    "build": "tsc -p . && yarn run build-ui && yarn run dist",
     "build-ui": "cd svelte && yarn run build-svelte && cp -r -T ./dist/. ../ui && cd .. && yarn run assets",
     "assets": "cp -r -T ./ui dist/ui",
-    "fix": "electron-builder install-app-deps",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.2",
@@ -54,6 +55,13 @@
     "files": [
       "dist/**/*",
       "package.json"
-    ]
+    ],
+    "win": {
+      "target": ["nsis"]
+    },
+    "directories": {
+      "app": ".",
+      "output": "out"
+    }
   }
 }

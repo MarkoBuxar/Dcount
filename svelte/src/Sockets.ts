@@ -10,6 +10,7 @@ import {
   saveList,
   dayChartData,
   splitChartData,
+  hourChartData,
 } from './Stores';
 
 export class sockets {
@@ -69,6 +70,10 @@ export class sockets {
 
     this.socket.on('splitChartData', (data) => {
       splitChartData.set(data);
+    });
+
+    this.socket.on('hourChartData', (data) => {
+      hourChartData.set(data);
     });
   }
 }

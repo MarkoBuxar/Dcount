@@ -10,10 +10,13 @@ export class Config {
   private static _instance: Config;
   private confPath;
   private conf;
+  public static dev = false;
 
   constructor() {
-    this.confPath = process.env.PRODUCTION ? './prod.json' : 'config.json';
-    this.conf = process.env.PRODUCTION ? prod : config;
+    var env = process.env.NODE_ENV;
+    Config.dev = env ? env.replace(/ /g, '') == 'development' : false;
+    this.confPath = Config.dev ? './config.json' : './prod.json';
+    this.conf = Config.dev ? config : prod;
   }
 
   public static get Instance() {

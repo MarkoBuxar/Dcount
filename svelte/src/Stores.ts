@@ -21,19 +21,9 @@ export const splitActive = writable(
 export const hotkeys: any = writable(
   JSON.parse(localStorage.getItem('hotkeys')) || ['A'],
 );
-export const dayChartData = writable({
-  labels: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
-  datasets: [
-    {
-      name: 'test',
-      values: [10, 12, 3, 9, 8, 15, 9],
-    },
-  ],
-});
-export const splitChartData = writable({
-  labels: ['label', 'label2'],
-  datasets: [{ name: 'deaths', values: [1, 2] }],
-});
+export const dayChartData = writable(null);
+export const hourChartData = writable(null);
+export const splitChartData = writable(null);
 
 save.subscribe((val) => localStorage.setItem('save', val));
 split.subscribe((val) => localStorage.setItem('split', val));

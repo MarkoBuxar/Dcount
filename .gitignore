@@ -4,3 +4,5 @@ dist
 save.db
 svelte/node_modules
 svelte/dist
+out
+ui/svelte-bundle*

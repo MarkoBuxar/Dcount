@@ -30,15 +30,11 @@ export class DB {
   }
 
   public createSave(name, hotkeys) {
-    console.log(name);
-    console.log(hotkeys);
     const save = this.db.prepare(
       'INSERT INTO saves (name, hotkeys) VALUES (?, ?)',
     );
-    console.log('statement prepared');
 
     save.run(name, hotkeys);
-    console.log('done');
     //DB.CURR_SAVE = name;
   }
 
@@ -139,12 +135,12 @@ export class DB {
     if (!save) return;
 
     const statement = this.db.prepare(
-      "SELECT STRFTIME('%d-%m-%Y', t, 'localtime') AS day, COUNT(DISTINCT value) AS value FROM entries WHERE save = ? GROUP BY day ORDER BY COUNT(value) DESC",
+      "SELECT STRFTIME('%d-%m-%Y', t, 'localtime') AS day, COUNT(DISTINCT value) AS value FROM entries WHERE save = ? GROUP BY day ORDER BY day ASC",
     );
 
     const data = statement.all(save);
 
-    if (!data) return null;
+    if (!data.length) return null;
 
     let chartData = {
       labels: [],
@@ -153,6 +149,32 @@ export class DB {
 
     data.forEach((element) => {
       let date = moment(element.day, 'DD-MM-YYYY').format('MMMM Do YYYY');
+      chartData.labels.push(date);
+      chartData.datasets[0].values.push(element.value);
+    });
+
+    return chartData;
+  }
+
+  public getHourChartData(name, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
+
+    const statement = this.db.prepare(
+      "SELECT STRFTIME('%d-%m-%Y %H:00', t, 'localtime') AS day, COUNT(DISTINCT value) AS value FROM entries WHERE save = ? GROUP BY day ORDER BY day ASC",
+    );
+
+    const data = statement.all(save);
+
+    if (!data.length) return null;
+
+    let chartData = {
+      labels: [],
+      datasets: [{ name: 'deaths', values: [] }],
+    };
+
+    data.forEach((element) => {
+      let date = moment(element.day, 'DD-MM-YYYY HH:mm').format('ddd, HH a');
       chartData.labels.push(date);
       chartData.datasets[0].values.push(element.value);
     });
@@ -169,6 +191,8 @@ export class DB {
     );
 
     const data = statement.all(save);
+
+    if (!data.length) return null;
 
     let chartData = {
       labels: [],

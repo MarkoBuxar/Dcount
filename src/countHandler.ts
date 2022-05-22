@@ -32,6 +32,12 @@ export class CountHandler {
       'dayChartData',
       DB.Instance.getDayChartData(DB.CURR_SAVE),
     );
+
+    Client.Instance.io.emit(
+      'hourChartData',
+      DB.Instance.getHourChartData(DB.CURR_SAVE),
+    );
+
     Client.Instance.io.emit(
       'splitChartData',
       DB.Instance.getSplitChartData(DB.CURR_SAVE),

@@ -48,5 +48,6 @@ export class Client {
     sock.emit('hotkeys', KBMhooks.getSavedKeys());
     sock.emit('dayChartData', DB.Instance.getDayChartData(DB.CURR_SAVE));
     sock.emit('splitChartData', DB.Instance.getSplitChartData(DB.CURR_SAVE));
+    sock.emit('hourChartData', DB.Instance.getHourChartData(DB.CURR_SAVE));
   }
 }

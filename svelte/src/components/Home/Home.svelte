@@ -10,6 +10,7 @@
     splitsEnabled,
     splitChartData,
     dayChartData,
+    hourChartData,
   } from '../../Stores';
   import Graph from '../Graphs/Graph.svelte';
 </script>
@@ -29,14 +30,17 @@
         {/if}
       </Row>
       <Row>
-        <Graph chartData={$dayChartData} />
-        <Graph chartData={$splitChartData} />
-        <Card class="dc-card-container flex-grow-1">
+        <Graph height="180" chartData={$dayChartData} />
+        {#if $splitsEnabled}
+          <Graph height="180" chartData={$splitChartData} />
+        {/if}
+        <Graph height="160" chartData={$hourChartData} type={'line'} />
+        <!--  <Card class="dc-card-container flex-grow-1">
           <Col class="d-flex flex-column align-center">
             <div class="dc-card-title">123123</div>
             <div class="dc-card-count">123123123123</div>
           </Col>
-        </Card>
+        </Card> -->
       </Row>
     </Col>
   </div>

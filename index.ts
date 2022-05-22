@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { Client } from './src/client';
+import { Config } from './src/Config/Config';
 import { DB } from './src/database';
 import { KBMhooks } from './src/kbmhooks';
 import { Server } from './src/server';
@@ -14,7 +15,9 @@ const createWindow = () => {
     useContentSize: true,
   });
 
-  win.loadURL('http://localhost:3000/');
+  let url = 'http://localhost:' + Server.port;
+
+  win.loadURL(url);
   win.focus();
 };
 

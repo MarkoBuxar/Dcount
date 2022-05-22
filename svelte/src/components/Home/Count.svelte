@@ -167,6 +167,10 @@
     background: #1e1e1e;
   }
 
+  .theme--light .dc-splits-list {
+    background: #ffffff;
+  }
+
   .dc-splits-list .s-btn__content {
     width: 100%;
   }
