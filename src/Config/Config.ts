@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import { Logger } from '../Logger/Logger';
+import { DB } from '../database';
 
 export class Config {
   private static _instance: Config;
@@ -38,11 +39,16 @@ export class Config {
     this.Save();
   }
 
+  public get ConfigString() {
+    let pathString = 'save-prefs' + '.' + DB.CURR_SAVE;
+    return pathString;
+  }
+
   private Save() {
     try {
       fs.writeFileSync(
         path.join(__dirname, this.confPath),
-        JSON.stringify(config, null, 2),
+        JSON.stringify(this.conf, null, 2),
       );
     } catch (exp) {
       throw Logger.Error('Error saving to config');

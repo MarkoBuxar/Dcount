@@ -1,7 +1,8 @@
 {
-    "log": {
-      "level": ["ERR", "INFO", "SUCC"]
-    },
-    "hotkeys": ["S"]
+  "log": {
+    "level": ["ERR", "WARN", "INFO", "SUCC"]
+  },
+  "save": "def", 
+  "save-prefs": {
   }
-  
+}

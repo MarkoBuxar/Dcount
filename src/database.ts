@@ -3,12 +3,16 @@ import { Config } from './Config/Config';
 import { dbInitHandler } from './dbInitHandler';
 import { KBMhooks } from './kbmhooks';
 import { Logger } from './Logger/Logger';
+import moment from 'moment';
 
 export class DB {
   private db;
-  private static _instance;
+  private static _instance: DB;
   public static CURR_SAVE = Config.Instance.Get('save') || 'def';
-  public static CURR_SPLIT = Config.Instance.Get('split') || 'def';
+  public static CURR_SPLIT =
+    Config.Instance.Get(Config.Instance.ConfigString + '.split') || null;
+  public static SPLIT_ENABLED =
+    Config.Instance.Get(Config.Instance.ConfigString + '.splitActive') || false;
 
   constructor() {
     this.db = sqlite('save.db', { verbose: Logger.Debug });
@@ -16,7 +20,7 @@ export class DB {
     new dbInitHandler(this.db).init();
 
     if (!this.getCurrentSaveID(DB.CURR_SAVE)) {
-      this.createNewSave(DB.CURR_SAVE, JSON.stringify(KBMhooks.getSavedKeys()));
+      this.createSave(DB.CURR_SAVE, JSON.stringify(['A']));
     }
     Logger.Info('DB initiated');
   }
@@ -25,11 +29,17 @@ export class DB {
     return this._instance || (this._instance = new this());
   }
 
-  public createNewSave(name, hotkeys) {
+  public createSave(name, hotkeys) {
+    console.log(name);
+    console.log(hotkeys);
     const save = this.db.prepare(
       'INSERT INTO saves (name, hotkeys) VALUES (?, ?)',
     );
+    console.log('statement prepared');
+
     save.run(name, hotkeys);
+    console.log('done');
+    //DB.CURR_SAVE = name;
   }
 
   public createIncident(name, split?, id?) {
@@ -38,30 +48,42 @@ export class DB {
     const statement = this.db.prepare(
       'INSERT INTO entries (save, value, split, s_value) VALUES (?, ?, ?, ?)',
     );
-    var currVal = this.getCurrentHighest(name, split, save) || { value: 0 };
+    const currVal = this.getCurrentHighest(name, save) || { value: 0 };
+    const currSplitVal = this.getCurrentHighestSplit(name, split, save);
 
     statement.run(
       save,
       ++currVal.value,
       split,
-      currVal.s_value ? ++currVal.s_value : null,
+      currSplitVal ? ++currSplitVal.s_value : null,
     );
   }
 
-  private getCurrentSaveID(name) {
-    try {
-      const statement = this.db.prepare('SELECT id FROM saves WHERE name = ?');
-      const data = statement.get(name);
-      if (!data) return null;
+  public createSplit(name, saveName, id?) {
+    const save = id || this.getCurrentSaveID(saveName);
+    if (!save) return;
 
-      return data.id;
-    } catch (error) {
-      Logger.Error(error);
-      return null;
-    }
+    var currVal = this.getCurrentHighest(saveName, save) || { value: 0 };
+
+    const statement = this.db.prepare(
+      'INSERT INTO entries (save, value, split, s_value) VALUES (?, ?, ?, ?)',
+    );
+
+    statement.run(save, currVal.value, name, 0);
   }
 
-  public getCurrentHighest(name, split?, id?) {
+  public saveHotkeys(name, hotkeys, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
+
+    const statement = this.db.prepare(
+      'UPDATE saves SET hotkeys = ? WHERE id = ?',
+    );
+
+    statement.run(JSON.stringify(hotkeys), save);
+  }
+
+  public getCurrentHighest(name, id?) {
     const save = id || this.getCurrentSaveID(name);
     if (!save) return;
     const statement = this.db.prepare(
@@ -76,7 +98,7 @@ export class DB {
     if (!save) return;
 
     const statement = this.db.prepare(
-      'SELECT s_value FROM entries WHERE save = ? AND split = ? ORDER BY value DESC LIMIT 1',
+      'SELECT s_value FROM entries WHERE save = ? AND split IS ? ORDER BY s_value DESC LIMIT 1',
     );
 
     const res = statement.get(save, split);
@@ -95,16 +117,83 @@ export class DB {
     return res;
   }
 
-  public createSplit(name, saveName, id?) {
-    const save = id || this.getCurrentSaveID(saveName);
+  public getSaveList() {
+    const statement = this.db.prepare('SELECT DISTINCT name FROM saves');
+
+    const res = statement.all();
+    return res;
+  }
+
+  public getHotkeys(name, id?) {
+    const save = id || this.getCurrentSaveID(name);
     if (!save) return;
 
-    var currVal = this.getCurrentHighest(saveName, null, save) || { value: 0 };
+    const statement = this.db.prepare('SELECT hotkeys FROM saves WHERE id = ?');
+
+    const res = statement.get(save);
+    return res;
+  }
+
+  public getDayChartData(name, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
 
     const statement = this.db.prepare(
-      'INSERT INTO entries (save, value, split, s_value) VALUES (?, ?, ?, ?)',
+      "SELECT STRFTIME('%d-%m-%Y', t, 'localtime') AS day, COUNT(DISTINCT value) AS value FROM entries WHERE save = ? GROUP BY day ORDER BY COUNT(value) DESC",
     );
 
-    statement.run(save, currVal.value, name, 0);
+    const data = statement.all(save);
+
+    if (!data) return null;
+
+    let chartData = {
+      labels: [],
+      datasets: [{ name: 'deaths', values: [] }],
+    };
+
+    data.forEach((element) => {
+      let date = moment(element.day, 'DD-MM-YYYY').format('MMMM Do YYYY');
+      chartData.labels.push(date);
+      chartData.datasets[0].values.push(element.value);
+    });
+
+    return chartData;
+  }
+
+  public getSplitChartData(name, id?) {
+    const save = id || this.getCurrentSaveID(name);
+    if (!save) return;
+
+    const statement = this.db.prepare(
+      "SELECT DISTINCT split, MAX(s_value) AS value, DATE(t, 'localtime') AS day FROM entries WHERE save = ? AND split IS NOT NULL GROUP BY split",
+    );
+
+    const data = statement.all(save);
+
+    let chartData = {
+      labels: [],
+      datasets: [{ name: 'deaths', values: [] }],
+    };
+
+    data.forEach((element) => {
+      //let date = moment(element.day, 'DD-MM-YYYY').format('MMMM Do YYYY');
+      chartData.labels.push(element.split);
+      chartData.datasets[0].values.push(element.value);
+    });
+
+    return chartData;
+  }
+
+  private getCurrentSaveID(name) {
+    try {
+      const statement = this.db.prepare('SELECT id FROM saves WHERE name = ?');
+      const data = statement.get(name);
+      if (!data) return null;
+
+      return data.id;
+    } catch (error) {
+      Logger.Error(error);
+      return null;
+    }
   }
 }

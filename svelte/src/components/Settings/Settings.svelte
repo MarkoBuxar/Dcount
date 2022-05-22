@@ -9,10 +9,21 @@
     Switch,
     TextField,
   } from 'svelte-materialify';
-  import { splitsEnabled } from '../../Stores';
+  import { sockets } from '../../Sockets';
+  import { splitsEnabled, hotkeys } from '../../Stores';
 
   const items = ['foo', 'bar', 'fizz', 'buzz'];
   let fontSize = 26;
+
+  function hotkeyFocus() {
+    console.log('clicked hotkeys');
+    sockets.Instance.socket.emit('toggleEdit', true);
+  }
+
+  function hotkeyUnfocus() {
+    sockets.Instance.socket.emit('toggleEdit', false);
+    console.log('unfocused');
+  }
 </script>
 
 <div class="dc-settings-title">
@@ -23,7 +34,14 @@
   <div class="d-flex flex-column">
     <Row class="mb-3">
       <TextField outlined class="ma-2">Name</TextField>
-      <TextField outlined class="ma-2">Hotkeys</TextField>
+      <TextField
+        outlined
+        class="ma-2"
+        readonly
+        value={$hotkeys.join(' + ')}
+        on:blur={hotkeyUnfocus}
+        on:focus={hotkeyFocus}>Hotkeys</TextField
+      >
     </Row>
 
     <Row class="d-flex justify-space-between mb-3">

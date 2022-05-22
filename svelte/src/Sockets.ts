@@ -1,8 +1,20 @@
-import { editMode, count, splitList, save, splitCount, split } from './Stores';
+import {
+  editMode,
+  count,
+  splitList,
+  save,
+  splitCount,
+  split,
+  splitActive,
+  hotkeys,
+  saveList,
+  dayChartData,
+  splitChartData,
+} from './Stores';
 
 export class sockets {
   public socket;
-  private static _instance;
+  private static _instance: sockets;
 
   constructor(io) {
     if (!sockets._instance) sockets._instance = this;
@@ -32,19 +44,31 @@ export class sockets {
     });
 
     this.socket.on('edit', (data) => {
-      this.updateEditStatus(data);
+      editMode.set(data);
     });
 
     this.socket.on('splitList', (data) => {
-      this.updateSplitList(data);
+      splitList.set(data);
     });
-  }
 
-  private updateEditStatus(data) {
-    editMode.set(data);
-  }
+    this.socket.on('saveList', (data) => {
+      saveList.set(data);
+    });
 
-  private updateSplitList(data) {
-    splitList.set(data);
+    this.socket.on('splitActive', (data) => {
+      splitActive.set(data);
+    });
+
+    this.socket.on('hotkeys', (data) => {
+      hotkeys.set(data);
+    });
+
+    this.socket.on('dayChartData', (data) => {
+      dayChartData.set(data);
+    });
+
+    this.socket.on('splitChartData', (data) => {
+      splitChartData.set(data);
+    });
   }
 }

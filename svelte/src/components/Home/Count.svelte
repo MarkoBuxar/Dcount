@@ -13,14 +13,14 @@
     Switch,
     TextField,
   } from 'svelte-materialify';
-  import { splitList } from '../../Stores';
+  import { splitList, splitActive } from '../../Stores';
   import { sockets } from '../../Sockets';
 
   export let count;
   export let save;
+  export let missingText;
 
   export let toggleable = false;
-  export let enabled;
   let menuOpen = false;
   let dialogOpen = false;
   let dialogTextField;
@@ -54,6 +54,10 @@
     sockets.Instance.socket.emit('createSplit', { name: dialogTextField });
     closeCreatePopup();
   }
+
+  splitActive.subscribe((val) => {
+    sockets.Instance.socket.emit('toggleSplit', { state: val });
+  });
 </script>
 
 <Card class="dc-card-container flex-grow-1">
@@ -67,7 +71,7 @@
               text
             >
               <span class="dc-splits-list-button-text">
-                {save}
+                {save ? save : 'split'}
               </span>
               <Icon path={mdiChevronDown} />
             </Button>
@@ -91,13 +95,20 @@
           </List>
         </Menu>
       </div>
-      <div class="dc-splits-enable-switch">
-        <Switch bind:enabled value="1" />
-      </div>
+
+      {#if save}
+        <div class="dc-splits-enable-switch">
+          <Switch bind:checked={$splitActive} value="1" />
+        </div>
+      {/if}
     {/if}
 
-    <div class="dc-card-title">{save}</div>
-    <div class="dc-card-count">{count}</div>
+    {#if !save}
+      <div class="dc-card-title">{missingText}</div>
+    {:else}
+      <div class="dc-card-title">{save}</div>
+      <div class="dc-card-count">{count}</div>
+    {/if}
   </Col>
 </Card>
 

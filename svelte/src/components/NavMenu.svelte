@@ -20,9 +20,12 @@
     ListItem,
     Divider,
     Overlay,
+    Dialog,
+    TextField,
   } from 'svelte-materialify';
   import { Link, Router } from 'svelte-routing';
-  import { save, theme } from '../Stores';
+  import { sockets } from '../Sockets';
+  import { save, theme, saveList } from '../Stores';
 
   function toggleTheme() {
     if ($theme === 'light') $theme = 'dark';
@@ -31,6 +34,8 @@
 
   let active = false;
   let subMenuActive = false;
+  let dialogOpen = false;
+  let dialogTextField = '';
 
   function close() {
     active = false;
@@ -45,7 +50,28 @@
   }
 
   function openSubMenu() {
+    sockets.Instance.socket.emit('getSaves');
     subMenuActive = true;
+  }
+
+  function openCreatePopup() {
+    dialogOpen = true;
+  }
+
+  function closeCreatePopup() {
+    dialogOpen = false;
+    dialogTextField = '';
+  }
+
+  function selectSave() {
+    sockets.Instance.socket.emit('selectSave', { save: this.innerText });
+  }
+
+  function createNewSave() {
+    if (!dialogTextField) return;
+    console.log(dialogTextField);
+    sockets.Instance.socket.emit('createSave', { name: dialogTextField });
+    closeCreatePopup();
   }
 </script>
 
@@ -71,19 +97,15 @@
               </Button>
             </div>
             <List style="width: 170px">
-              <ListItem>
-                <span slot="prepend">
-                  <Icon path={mdiAccountBoxMultiple} />
-                </span>
-                Option 1</ListItem
-              >
-              <ListItem>
-                <span slot="prepend">
-                  <Icon path={mdiAccountBoxMultiple} />
-                </span>
-                Option 2</ListItem
-              >
-              <ListItem>
+              {#each $saveList as saveItem}
+                <ListItem on:click={selectSave}>
+                  <span slot="prepend">
+                    <Icon path={mdiAccountBoxMultiple} />
+                  </span>
+                  {saveItem.name}
+                </ListItem>
+              {/each}
+              <ListItem on:click={openCreatePopup}>
                 <span slot="prepend">
                   <Icon path={mdiPlus} />
                 </span>
@@ -121,3 +143,22 @@
   </NavigationDrawer>
 </Router>
 <Overlay index={1} {active} on:click={close} absolute />
+
+<Dialog class="pa-4 text-center" bind:active={dialogOpen}>
+  <div class="dc-splits-dialog-title pa-3 mb-7">
+    <h3>Create new save</h3>
+  </div>
+  <div class="dc-splits-dialog-textField mb-7">
+    <TextField outlined counter={30} bind:value={dialogTextField}
+      >Save Name</TextField
+    >
+  </div>
+
+  <div class="dc-splits-dialog-buttons d-flex flex-row justify-end">
+    <Button outlined class="red-text" on:click={closeCreatePopup}>Cancel</Button
+    >
+    <Button outlined class="green-text ml-2" on:click={createNewSave}
+      >Create</Button
+    >
+  </div>
+</Dialog>

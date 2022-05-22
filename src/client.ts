@@ -5,9 +5,9 @@ import { Logger } from './Logger/Logger';
 import { socketHandler } from './socketHandler';
 
 export class Client {
-  private io: Server;
+  public io: Server;
   private clients = {};
-  private static _instance;
+  private static _instance: Client;
 
   constructor(io) {
     this.io = io;
@@ -18,19 +18,7 @@ export class Client {
       Logger.Info('client connected, id: ', socket.id);
       this.clients[socket.id] = socket;
       await this.initOutlets(socket);
-      var currHighest = DB.Instance.getCurrentHighest(DB.CURR_SAVE);
-      var currHighestSplit = DB.Instance.getCurrentHighestSplit(
-        DB.CURR_SAVE,
-        DB.CURR_SPLIT,
-      );
-      socket.emit('save', DB.CURR_SAVE);
-      socket.emit('split', DB.CURR_SPLIT);
-      socket.emit('count', currHighest ? currHighest.value : 0);
-      socket.emit(
-        'splitCount',
-        currHighestSplit ? currHighestSplit.s_value : 0,
-      );
-      socket.emit('edit', KBMhooks.getEditStatus());
+      Client.initClient(socket);
     });
   }
 
@@ -41,5 +29,24 @@ export class Client {
   private async initOutlets(socket: Socket) {
     let sh = new socketHandler();
     await sh.init(socket);
+  }
+
+  public static initClient(socket?) {
+    var sock = socket || Client.Instance.io;
+
+    var currHighest = DB.Instance.getCurrentHighest(DB.CURR_SAVE);
+    var currHighestSplit = DB.Instance.getCurrentHighestSplit(
+      DB.CURR_SAVE,
+      DB.CURR_SPLIT,
+    );
+    sock.emit('save', DB.CURR_SAVE);
+    sock.emit('split', DB.CURR_SPLIT);
+    sock.emit('splitActive', DB.SPLIT_ENABLED);
+    sock.emit('count', currHighest ? currHighest.value : 0);
+    sock.emit('splitCount', currHighestSplit ? currHighestSplit.s_value : 0);
+    sock.emit('edit', KBMhooks.getEditStatus());
+    sock.emit('hotkeys', KBMhooks.getSavedKeys());
+    sock.emit('dayChartData', DB.Instance.getDayChartData(DB.CURR_SAVE));
+    sock.emit('splitChartData', DB.Instance.getSplitChartData(DB.CURR_SAVE));
   }
 }
