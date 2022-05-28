@@ -13,7 +13,7 @@ export function createSave(socket) {
 
     var split = Config.Instance.Get(Config.Instance.ConfigString);
 
-    DB.CURR_SPLIT = split && split.split ? split.split : null;
+    DB.CURR_SPLIT = split && split.split ? split.split.trim() : null;
     DB.SPLIT_ENABLED = split && split.splitActive ? split.splitActive : false;
 
     Client.initClient();

@@ -9,8 +9,11 @@ export class DB {
   private db;
   private static _instance: DB;
   public static CURR_SAVE = Config.Instance.Get('save') || 'def';
-  public static CURR_SPLIT =
-    Config.Instance.Get(Config.Instance.ConfigString + '.split') || null;
+  public static CURR_SPLIT = Config.Instance.Get(
+    Config.Instance.ConfigString + '.split',
+  )
+    ? Config.Instance.Get(Config.Instance.ConfigString + '.split').trim()
+    : null;
   public static SPLIT_ENABLED =
     Config.Instance.Get(Config.Instance.ConfigString + '.splitActive') || false;
 
@@ -65,7 +68,7 @@ export class DB {
       'INSERT INTO entries (save, value, split, s_value) VALUES (?, ?, ?, ?)',
     );
 
-    statement.run(save, currVal.value, name, 0);
+    statement.run(save, currVal.value, name.trim(), 0);
   }
 
   public saveHotkeys(name, hotkeys, id?) {
