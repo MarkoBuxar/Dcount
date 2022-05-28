@@ -97,7 +97,7 @@ export class DB {
     if (!save) return;
 
     const statement = this.db.prepare(
-      'SELECT s_value FROM entries WHERE save = ? AND split IS ? ORDER BY s_value DESC LIMIT 1',
+      'SELECT s_value FROM entries WHERE save = ? AND split LIKE ? ORDER BY s_value DESC LIMIT 1',
     );
 
     const res = statement.get(save, split);

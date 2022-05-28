@@ -164,10 +164,13 @@
     top: 0px;
     left: 0px;
     margin: 5px;
+  }
+
+  .dc-splits-list:hover {
     background: #1e1e1e;
   }
 
-  .theme--light .dc-splits-list {
+  .theme--light .dc-splits-list:hover {
     background: #ffffff;
   }
 

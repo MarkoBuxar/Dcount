@@ -4,12 +4,14 @@ import { DB } from '../database';
 
 export function createSave(socket) {
   socket.on('createSave', (data) => {
+    const name = data.name.trim();
+
     let hotkeys = DB.Instance.getHotkeys(DB.CURR_SAVE);
 
-    var save = DB.Instance.createSave(data.name, hotkeys.hotkeys);
+    var save = DB.Instance.createSave(name, hotkeys.hotkeys);
 
-    DB.CURR_SAVE = data.name;
-    Config.Instance.Set('save', data.name);
+    DB.CURR_SAVE = name;
+    Config.Instance.Set('save', name);
 
     var split = Config.Instance.Get(Config.Instance.ConfigString);
 

@@ -4,7 +4,7 @@ import { DB } from '../database';
 
 export function selectSave(socket) {
   socket.on('selectSave', (data) => {
-    DB.CURR_SAVE = data.save;
+    DB.CURR_SAVE = data.save.trim();
     Config.Instance.Set('save', data.save);
 
     var split = Config.Instance.Get(Config.Instance.ConfigString);
