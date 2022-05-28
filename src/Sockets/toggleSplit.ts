@@ -1,3 +1,4 @@
+import { Client } from '../client';
 import { Config } from '../Config/Config';
 import { DB } from '../database';
 
@@ -8,5 +9,6 @@ export function toggleSplit(socket) {
       Config.Instance.ConfigString + '.splitActive',
       data.state,
     );
+    Client.Instance.io.emit('splitActive', data.state);
   });
 }
