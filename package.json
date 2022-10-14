@@ -1,29 +1,67 @@
 {
-  "name": "ts-boilerplate",
-  "description": "typescript boilerplate",
-  "version": "0.0.1",
+  "name": "d-count",
+  "description": "Death counter",
+  "version": "1.0.0",
+  "author": "Mrucs",
   "main": "dist/index.js",
-  "bin": {
-    "<BASH COMMAND>": "dist/index.js"
-  },
   "license": "MIT",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "build": "tsc -p .",
-    "global-install": "yarn build && yarn global add file:$PWD",
-    "global-reinstall": "yarn global remove <BASH COMMAND> && yarn global-install"
+    "start": "SET NODE_ENV=development & tsc && yarn run build-ui && electron .",
+    "build": "tsc -p . && yarn run build-ui && yarn run dist",
+    "build-ui": "cd svelte && yarn run build-svelte && cp -r -T ./dist/. ../ui && cd .. && yarn run assets",
+    "assets": "cp -r -T ./ui dist/ui",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "tslint": "^6.1.1",
-    "typescript": "^3.8.3",
-    "@types/node": "^13.11.0",
-    "@types/fs-extra": "^8.1.0",
+    "@rollup/plugin-typescript": "^8.3.2",
+    "@types/better-sqlite3": "^7.5.0",
     "@types/chalk": "^2.2.0",
-    "@types/lodash": "^4.14.149"
+    "@types/express": "^4.17.13",
+    "@types/fs-extra": "^8.1.0",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.11.0",
+    "@types/socket.io": "^3.0.2",
+    "electron": "^18.2.0",
+    "electron-builder": "^23.0.3",
+    "postcss": "^8.4.13",
+    "rollup-plugin-polyfill-node": "^0.9.0",
+    "sass": "^1.51.0",
+    "svelte-materialify": "^0.3.11",
+    "svelte-preprocess": "^4.10.6",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@mdi/js": "^6.6.96",
+    "@types/moment": "^2.13.0",
+    "better-sqlite3": "^7.5.1",
     "chalk": "^4.0.0",
+    "express": "^4.18.1",
     "fs-extra": "^9.0.0",
-    "lodash": "^4.17.15"
+    "gkm": "^0.2.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.29.3",
+    "socket.io": "^4.5.0",
+    "svelte-routing": "^1.6.0"
+  },
+  "build": {
+    "appId": "com.dcount.app",
+    "asarUnpack": [
+      "node_modules/gkm",
+      "node_modules/eventemitter2",
+      "dist/src/Config"
+    ],
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": ["nsis"]
+    },
+    "directories": {
+      "app": ".",
+      "output": "out"
+    }
   }
 }
